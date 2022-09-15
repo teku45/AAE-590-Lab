@@ -1,6 +1,7 @@
 %% AAE 590 Lab 1 Report
 % Group 1, 9/12/22
 % Shawn Prosky, Ellen Nguyen, Lauren Risany, Sidd Subramanyam
+% Hello there
 
 clc; clear; close all;
 %% constants
