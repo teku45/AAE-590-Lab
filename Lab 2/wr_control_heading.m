@@ -9,14 +9,18 @@ function [wr] = wr_control_heading(wr, time)
 %     Ki = 3.431;
 %     Kd = 10.671;
 
-    Kp = .08305;
-    Kd = 0.009722;
-    Ki = 0.00047;
+%     Kp = .78305;
+%     Kd = 0.009722;
+%     Ki = 0.00547;
+    Kp = 1.48305;
+    Kd = 0.015722;
+    Ki = 0.0247;
+
     % POTENTIALLY SWITCH SIGNS
     desired_angle = atan2d(wr.heading_dir(2), wr.heading_dir(1));% + 180;
     actual_angle = atan2d(wr.heading_vec(2), wr.heading_vec(1));
     wr.e_heading = desired_angle - actual_angle;
-    [wr.e_heading]
+  
 
     % adjusting heading error to [-180, 180]
     if (wr.e_heading > 180)
@@ -30,7 +34,7 @@ function [wr] = wr_control_heading(wr, time)
 
     e_heading_deriv = (wr.e_heading - wr.e_heading_old) / time.dt;
     wr.e_heading_cum = wr.e_heading_cum + wr.e_heading;
-    PWM = Kp * wr.e_heading + Ki * wr.e_heading_cum + Kd * e_heading_deriv
+    PWM = Kp * wr.e_heading + Ki * wr.e_heading_cum + Kd * e_heading_deriv;
     if (abs(wr.e_heading) < 15)
         PWM = 0;
     end
@@ -57,4 +61,5 @@ function [wr] = wr_control_heading(wr, time)
     scatter(time.curr,actual_angle,'g'); hold on;
     scatter(time.curr,desired_angle,'r');
     drawnow;
+    
 end

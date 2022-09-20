@@ -10,7 +10,7 @@ function [wr] = wr_control_spd(wr, time)
     Kd = 0.00047;
 
     %v_curr = pdist([wr.pos; wr.pos_old]) / time.dt
-    v_curr = sqrt((wr.pos(2)-wr.pos_old(2))^2 + (wr.pos(1)-wr.pos_old(1))^2) / time.dt
+    v_curr = sqrt((wr.pos(2)-wr.pos_old(2))^2 + (wr.pos(1)-wr.pos_old(1))^2) / time.dt;
     wr.espd = wr.forward_spd - v_curr;
     %[wr.espd]
     espd_deriv = (wr.espd -  wr.espd_old) / time.dt;
