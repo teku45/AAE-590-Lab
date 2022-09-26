@@ -7,6 +7,7 @@ function [wr] = wr_control_wp(wr, time)
 
     % Coordinates of current target waypoint based on its current index
     target_wayP = wr.WP(wr.curWP,:);
+    distance_to_target = target_wayP - wr.pos;
 
     % Heading angle
     desired_angle = atan2d((target_wayP(2) - wr.pos(2)),( target_wayP(1) - wr.pos(1)));
@@ -36,7 +37,7 @@ function [wr] = wr_control_wp(wr, time)
         wr = wr_control_heading(wr, time);
        
         fprintf("heading mode");
-    elseif (sqrt((wr.pos(2)-target_wayP(2))^2 + (wr.pos(1)-target_wayP(1))^2) > 100) 
+    elseif norm(distance_to_target) > 100) 
         
         wr = wr_control_spd(wr, time);
         fprintf("speed mode");
