@@ -37,7 +37,7 @@ function [wr] = wr_control_wp(wr, time)
         wr = wr_control_heading(wr, time);
        
         fprintf("heading mode");
-    elseif norm(distance_to_target) > 100) 
+    elseif norm(distance_to_target) > 100 
         
         wr = wr_control_spd(wr, time);
         fprintf("speed mode");
