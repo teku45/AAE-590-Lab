@@ -41,11 +41,11 @@ function [wr] = wr_control_wp(wr, time)
         
         wr = wr_control_spd(wr, time);
         fprintf("speed mode");
-    elseif
+    elseif wr.curWP < length(wr.WP(:,1))
         wr.curWP = wr.curWP + 1;
         wr.espd_cum = 0;
         wr.e_heading_cum = 0;
-    else wr.curWP < length(wr.WP(:,1))
+    else 
         wr.DIRL = 1;
         wr.DIRR = 1;
         wr.PWML = 0;

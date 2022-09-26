@@ -24,7 +24,7 @@ nc_aux = 4;
 nc_total = nc_defect + nc_aux;
 
 % Set the starting and ending points
-x01 = 0;  % starting point
+x01 = -1.8;  % starting point
 x02 = 0;
 xf1 = 10;  % ending point
 xf2 = -10;
