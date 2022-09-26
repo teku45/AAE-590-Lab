@@ -24,10 +24,10 @@ nc_aux = 4;
 nc_total = nc_defect + nc_aux;
 
 % Set the starting and ending points
-x01 = 0;  % starting point
-x02 = 0;
-xf1 = 10;  % ending point
-xf2 = -10;
+x01 = ;  % starting point
+x02 = 3;
+xf1 = 20;  % ending point
+xf2 = 0;
 % set the initial guess/input of NLP variables
 u_guess=atan((xf2-x02)/(xf1-x01));
 for i=1:1:nnodes
