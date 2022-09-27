@@ -19,14 +19,16 @@ for i = 1:simulation
 
     % Evaluate & illustrate the world
     [obstacle,conic,polygon] = obstacle_eval();
+    xymax = max([obstacle.coordinate;starting;ending],[],1)+0.1;
+    xymin = min([obstacle.coordinate;starting;ending],[],1)-0.1;
     [xymax,xymin] = obstacle_plot(obstacle,conic,polygon,starting,ending);
-    axis image
-    axis([-3.9 15.9 -2.45 xymax(1,2)])  % Re-define axis for comparision consistency purpose
+    axis equal
+    %axis([-3.9 15.9 -2.45 xymax(1,2)])  % Re-define axis for comparision consistency purpose
 
     % Solve the collision avoidance problem using RRT. Then, plot the
     % result tree and feasible path, and report computation time.
     [path,tree,connection] = RRT_eval(obstacle,starting,ending,xymax,xymin);
-    plot1 = plot(path(:,1),path(:,2),':r','LineWidth',2.5);
+    %plot1 = plot(path(:,1),path(:,2),':r','LineWidth',2.5);
     time1 = toc;
     fprintf('The computation time for RRT is %f sec.\n',time1)
 
@@ -258,8 +260,8 @@ while isempty(path)
     connection = [connection;costindex];
 
     % Illustrate the tree with added node and new branch 
-    plot([tree(costindex,1),x],[tree(costindex,2),y],'.m','MarkerSize',1)
-    plot([tree(costindex,1),x],[tree(costindex,2),y],'-b')
+    %plot([tree(costindex,1),x],[tree(costindex,2),y],'.m','MarkerSize',1)
+    %plot([tree(costindex,1),x],[tree(costindex,2),y],'-b')
 
     % Check if new sample is close enough to reach ending directly
     if norm(ending-[x,y])<step

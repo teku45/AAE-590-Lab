@@ -1,5 +1,6 @@
 % clear,clc; clear all; close all; fclose all; format long;
-function RRTOPT = RRTsimulator
+function[path] = RRTsimulator(coords)
+close all
 %   Function: Simulate an obstacle avoiding problem with a modified RRT
 %             algorithm which returns the original path, the refined path,
 %             and the computation time of both.
@@ -13,26 +14,28 @@ output.length = [0];
 for i = 1:simulation
     tic
     % Define starting & ending points
-    starting = [0,0];
-    ending = [10,10];
+    starting = [-1.2,0];
+    ending = [1.8,0];
 
     % Evaluate & illustrate the world
     [obstacle,conic,polygon] = obstacle_eval();
-    [xymax,xymin] = obstacle_plot(obstacle,conic,polygon,starting,ending);
-    axis image
-    axis([-3.9 15.9 -2.45 xymax(1,2)])  % Re-define axis for comparision consistency purpose
+    xymax = max([obstacle.coordinate;starting;ending],[],1)+0.1;
+    xymin = min([obstacle.coordinate;starting;ending],[],1)-0.1;
+    %[xymax,xymin] = obstacle_plot(obstacle,conic,polygon,starting,ending);
+    %axis equal
+    %axis([-3.9 15.9 -2.45 xymax(1,2)])  % Re-define axis for comparision consistency purpose
 
     % Solve the collision avoidance problem using RRT. Then, plot the
     % result tree and feasible path, and report computation time.
     [path,tree,connection] = RRT_eval(obstacle,starting,ending,xymax,xymin);
-    plot1 = plot(path(:,1),path(:,2),':r','LineWidth',2.5);
+    %plot1 = plot(path(:,1),path(:,2),':r','LineWidth',2.5);
     time1 = toc;
     fprintf('The computation time for RRT is %f sec.\n',time1)
 
     % Refine the exist path due to limitation of vehicle
     turning = 30;                       % limitation of turning angle (deg)
     [path,pathlength] = path_opt(path,obstacle,xymax,xymin,turning);
-    plot(path(:,1),path(:,2),'LineWidth',2.5)
+    %plot(path(:,1),path(:,2),'LineWidth',2.5)
     time2 = toc;
     fprintf('The computation time of refined process is %f sec.\n',time2)
     fprintf('The total distance of traveling is %f\n',pathlength(1))
@@ -55,8 +58,8 @@ function [obstacle,conic,polygon] = obstacle_eval()
 %            ellipse
 conic = [];
 conic(1).name = 'circle1';
-conic(1).center = [0,];
-conic(1).ab = 0.3./sqrt([1,1]);
+conic(1).center = coords;
+conic(1).ab = (0.3+0.08)./sqrt([1,1]);
 % conic(2).name = 'circle2';
 % conic(2).center = [1,8];
 % conic(2).ab = 1.5./sqrt([1,1]);
@@ -148,9 +151,8 @@ plot(ending(1,1),ending(1,2),'*b')
 %
 xymax = max([obstacle.coordinate;starting;ending],[],1)+0.1;
 xymin = min([obstacle.coordinate;starting;ending],[],1)-0.1;
-axis image
-axis([xymin(1,1)-obstacle.radius xymax(1,1)+obstacle.radius...
-      xymin(1,2)-obstacle.radius xymax(1,2)+obstacle.radius]);
+%axis image
+%axis([xymin(1,1)-obstacle.radius xymax(1,1)+obstacle.radius, xymin(1,2)-obstacle.radius xymax(1,2)+obstacle.radius]);
 grid off
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function col = collision_eval(node1,node2,obstacle,xymax,xymin)
@@ -257,8 +259,8 @@ while isempty(path)
     connection = [connection;costindex];
 
     % Illustrate the tree with added node and new branch 
-    plot([tree(costindex,1),x],[tree(costindex,2),y],'.m','MarkerSize',1)
-    plot([tree(costindex,1),x],[tree(costindex,2),y],'-b')
+    %plot([tree(costindex,1),x],[tree(costindex,2),y],'.m','MarkerSize',1)
+    %plot([tree(costindex,1),x],[tree(costindex,2),y],'-b')
 
     % Check if new sample is close enough to reach ending directly
     if norm(ending-[x,y])<step

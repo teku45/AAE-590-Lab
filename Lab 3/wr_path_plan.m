@@ -1,4 +1,4 @@
-function [wr] = wr_control_wp(wr, time)
+function [wr] = wr_control_wp(wr, obs, time)
    % default values
     wr.DIRL = 1;
     wr.DIRR = 1;
@@ -26,24 +26,31 @@ function [wr] = wr_control_wp(wr, time)
     if (wr.e_heading > 180)
         wr.e_heading = wr.e_heading - 360;
     end
+    
+    if obs.pos(3) < 20
+        if (abs(wr.e_heading) > 15)
+            wr = wr_control_heading(wr, time);
 
-    if (abs(wr.e_heading) > 15)
-        wr = wr_control_heading(wr, time);
-       
-        fprintf("heading mode");
-    elseif norm(distance_to_target) > 100 
-        
-        wr = wr_control_spd(wr, time);
-        fprintf("speed mode");
-    elseif wr.curWP < length(wr.WP(:,1))
-        wr.curWP = wr.curWP + 1;
-        wr.espd_cum = 0;
-        wr.e_heading_cum = 0;
+            fprintf("heading mode");
+        elseif norm(distance_to_target) > 100 
+
+            wr = wr_control_spd(wr, time);
+            fprintf("speed mode");
+        elseif wr.curWP < length(wr.WP(:,1))
+            wr.curWP = wr.curWP + 1;
+            wr.espd_cum = 0;
+            wr.e_heading_cum = 0;
+        else 
+            wr.DIRL = 1;
+            wr.DIRR = 1;
+            wr.PWML = 0;
+            wr.PWMR = 0;
+        end
+        recalculate = 0;
     else 
-        wr.DIRL = 1;
-        wr.DIRR = 1;
-        wr.PWML = 0;
-        wr.PWMR = 0;
+        if recalculate == 0
+            wr.WP(:,:) = RRTsimualtor([obs.pos(1),obs.pos(2)]);
+            recalculate = 1;
+        end
     end
-
 end

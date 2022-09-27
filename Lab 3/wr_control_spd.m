@@ -29,12 +29,14 @@ function [wr] = wr_control_spd(wr, time)
         wr.espd_cum=0;
     end
 
+    min_PWM = 30
     % setting the PWM limits, keep the codes here
-    PWML = min(254, PWML);
+    %PWML = min(254, PWML);
+    PWML = rescale(PWML,min_PWM,254);
     wr.PWML = uint8(max(0, PWML));
-    PWMR = min(254, PWMR);
+    %PWMR = min(254, PWMR);
+    PWMR = rescale(PWMR,min_PWM,254);
     wr.PWMR = uint8(max(0, PWMR));
-    PWML;
     wr.pos_old = wr.pos;
 
 

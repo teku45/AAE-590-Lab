@@ -52,10 +52,13 @@ function [wr] = wr_control_heading(wr, time)
     PWML = abs(PWM);
     PWMR = abs(PWM);
 
+    min_PWM = 50;
     % setting the PWM limits, keep the codes here
-    PWML = min(90, PWML);
+    %PWML = min(90, PWML);
+    PWML = rescale(PWML,min_PWM,254);
     wr.PWML = uint8(max(0, PWML));
-    PWMR = min(90, PWMR);
+    %PWMR = min(90, PWMR);
+    PWMR = rescale(PWMR,min_PWM,254);
     wr.PWMR = uint8(max(0, PWMR));
 
     scatter(time.curr,actual_angle,'g'); hold on;
