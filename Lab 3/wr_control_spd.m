@@ -32,10 +32,17 @@ function [wr] = wr_control_spd(wr, time)
     min_PWM = 30
     % setting the PWM limits, keep the codes here
     %PWML = min(254, PWML);
+<<<<<<< Updated upstream
     PWML = rescale(PWML,min_PWM,254);
     wr.PWML = uint8(max(0, PWML));
     %PWMR = min(254, PWMR);
     PWMR = rescale(PWMR,min_PWM,254);
+=======
+    PWML = rescale(PWML,30,254,'InputMin',0,'InputMax',255);
+    wr.PWML = uint8(max(0, PWML));
+    %PWMR = min(254, PWMR);
+    PWMR = rescale(PWMR,30,254,'InputMin',0,'InputMax',255);
+>>>>>>> Stashed changes
     wr.PWMR = uint8(max(0, PWMR));
     wr.pos_old = wr.pos;
 

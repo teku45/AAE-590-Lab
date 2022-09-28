@@ -24,10 +24,17 @@ nc_aux = 4;
 nc_total = nc_defect + nc_aux;
 
 % Set the starting and ending points
+<<<<<<< Updated upstream
 x01 = -1.8;  % starting point
 x02 = 0;
 xf1 = 10;  % ending point
 xf2 = -10;
+=======
+x01 = 0;  % starting point
+x02 = 1;
+xf1 = 1;  % ending point
+xf2 = 1;
+>>>>>>> Stashed changes
 % set the initial guess/input of NLP variables
 u_guess=atan((xf2-x02)/(xf1-x01));
 for i=1:1:nnodes
@@ -47,3 +54,5 @@ for i=1:1:nnodes
 end
 figure (1)
 plot(xff,yff)
+%axis equal;
+wp = [xff; yff]'
