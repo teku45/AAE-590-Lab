@@ -9,7 +9,8 @@ else
 end
 
 if (wr.obs_mode == 0 && wr.obs_prev_mode == 1)
-    wr.WP = RRTsimulator_AAE590(wr.pos, obs_pos);
+    Waypoints = RRTsimulator_AAE590(wr.pos, obs_pos);
+    wr.WP = Waypoints(:,1:2);
     wr.curWP = 1;
 end
 

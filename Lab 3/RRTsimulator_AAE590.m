@@ -1,5 +1,5 @@
 % clear,clc; clear all; close all; fclose all; format long;
-function[path] = RRTsimulator(rob_pos, obs_pos)
+function[path] = RRTsimulator_AAE590(rob_pos, obs_pos)
 close all
 %   Function: Simulate an obstacle avoiding problem with a modified RRT
 %             algorithm which returns the original path, the refined path,
@@ -19,17 +19,17 @@ for i = 1:simulation
     ending = [1.8,0];
 
     % Evaluate & illustrate the world
-    [obstacle,conic,polygon] = obstacle_eval();
+    [obstacle,conic,polygon] = obstacle_eval(obs_pos);
     xymax = max([obstacle.coordinate;starting;ending],[],1)+0.1;
     xymin = min([obstacle.coordinate;starting;ending],[],1)-0.1;
-    %[xymax,xymin] = obstacle_plot(obstacle,conic,polygon,starting,ending);
+    [xymax,xymin] = obstacle_plot(obstacle,conic,polygon,starting,ending);
     axis equal
     %axis([-3.9 15.9 -2.45 xymax(1,2)])  % Re-define axis for comparision consistency purpose
 
     % Solve the collision avoidance problem using RRT. Then, plot the
     % result tree and feasible path, and report computation time.
     [path,tree,connection] = RRT_eval(obstacle,starting,ending,xymax,xymin);
-    %plot1 = plot(path(:,1),path(:,2),':r','LineWidth',2.5);
+    plot1 = plot(path(:,1),path(:,2),':r','LineWidth',2.5);
     time1 = toc;
     fprintf('The computation time for RRT is %f sec.\n',time1)
 
@@ -49,14 +49,25 @@ for i = 1:simulation
 end
 save(['Example1_7_',num2str(simulation),'.mat'],'output')
 
-if (pathlength(1) < 3.2)
+tol = 2;
+min_distance = norm([rob_pos(1),rob_pos(2)]-[1.8,0]) * tol;
+% if (min_distance > 2)
+%     tol = 1.5;
+% elseif (min_distance > 1)
+%     tol = 2;
+% else
+%     tol = 3;
+% end
+% min_distance = min_distance * tol
+% Constrain to 20 waypoints otherwise try again
+if (pathlength(1) < min_distance)% && size(path,1) < 20)
     break;
 end
 end
 
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-function [obstacle,conic,polygon] = obstacle_eval()
+function [obstacle,conic,polygon] = obstacle_eval(obs_pos)
 %   Function: Create obstacles (circle, ellipse, or ploygon shapes) in the
 %             environment.
 
@@ -131,28 +142,28 @@ function [xymax,xymin] = obstacle_plot(obstacle,conic,polygon,starting,...
 %   Function: Illustrate the environment with max & min coordinates,
 %             obstacles, and boundary.
 
-% RRTfigure = figure;
-% set(RRTfigure,'Name','RRT Simulator')
-% set(RRTfigure,'NumberTitle','off')
-% set(RRTfigure,'Position',[500 50 900 900])
-% hold on
+RRTfigure = figure;
+set(RRTfigure,'Name','RRT Simulator')
+set(RRTfigure,'NumberTitle','off')
+set(RRTfigure,'Position',[500 50 900 900])
+hold on
 
 % Plot conic obstacles
-% t=0:pi/100:2*pi;
-% for index = 1:size(conic,2)
-%     x = conic(index).center(1,1)+conic(index).ab(1)*cos(t);
-%     y = conic(index).center(1,2)+conic(index).ab(2)*sin(t);
-%     fill(x,y,'w','EdgeColor','none')
-%     plot(x,y,'g')
-% end
+t=0:pi/100:2*pi;
+for index = 1:size(conic,2)
+    x = conic(index).center(1,1)+conic(index).ab(1)*cos(t);
+    y = conic(index).center(1,2)+conic(index).ab(2)*sin(t);
+    fill(x,y,'w','EdgeColor','none')
+    plot(x,y,'g')
+end
 
 % Plot ploygon obstacles
-% for jndex = 1:size(polygon,2)
-%     x = polygon(jndex).vertex(:,1);
-%     y = polygon(jndex).vertex(:,2);
-%     fill(x,y,'k','EdgeColor','none')
-%     plot(x,y,'g')
-% end
+for jndex = 1:size(polygon,2)
+    x = polygon(jndex).vertex(:,1);
+    y = polygon(jndex).vertex(:,2);
+    fill(x,y,'k','EdgeColor','none')
+    plot(x,y,'g')
+end
 
 % % Plot starting & ending point 
 % plot(starting(1,1),starting(1,2),'ob')
@@ -361,6 +372,7 @@ while jndex <= iteration
 end
 
 % Smoothing from the ending along the path
+
 fprintf('Refining in progress..(2/4)\n')
 while 1
     point1 = path(3,1:2);
