@@ -14,7 +14,7 @@ function [wr] = wr_control_spd(wr, time)
     wr.espd = wr.forward_spd - v_curr;
     %[wr.espd]
     espd_deriv = (wr.espd -  wr.espd_old) / time.dt;
-    wr.espd_cum = wr.espd_cum + wr.espd;
+    wr.espd_cum = wr.espd_cum + wr.espd*(1-wr.obs_mode);
     PWM = Kp * wr.espd + Ki * wr.espd_cum + Kd * espd_deriv;
     % Food for thought: is this the error to be added to v_curr or just the
     % new wheel velocity 
@@ -22,28 +22,21 @@ function [wr] = wr_control_spd(wr, time)
     % Update old error
     wr.espd_old = wr.espd;
 
-    PWML = PWM;
-    PWMR = PWM;
+    PWML = PWM*(1-wr.obs_mode);
+    PWMR = PWM*(1-wr.obs_mode);
 
     if isnan(wr.espd_cum)
         wr.espd_cum=0;
     end
 
-    min_PWM = 30
     % setting the PWM limits, keep the codes here
     %PWML = min(254, PWML);
-<<<<<<< Updated upstream
-    PWML = rescale(PWML,min_PWM,254);
-    wr.PWML = uint8(max(0, PWML));
-    %PWMR = min(254, PWMR);
-    PWMR = rescale(PWMR,min_PWM,254);
-=======
     PWML = rescale(PWML,30,254,'InputMin',0,'InputMax',255);
     wr.PWML = uint8(max(0, PWML));
     %PWMR = min(254, PWMR);
     PWMR = rescale(PWMR,30,254,'InputMin',0,'InputMax',255);
->>>>>>> Stashed changes
     wr.PWMR = uint8(max(0, PWMR));
+    PWML;
     wr.pos_old = wr.pos;
 
 

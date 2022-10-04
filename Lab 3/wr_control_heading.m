@@ -33,7 +33,7 @@ function [wr] = wr_control_heading(wr, time)
     end
 
     e_heading_deriv = (wr.e_heading - wr.e_heading_old) / time.dt;
-    wr.e_heading_cum = wr.e_heading_cum + wr.e_heading;
+    wr.e_heading_cum = wr.e_heading_cum + wr.e_heading*(1-wr.obs_mode);
     PWM = Kp * wr.e_heading + Ki * wr.e_heading_cum + Kd * e_heading_deriv;
     if (abs(wr.e_heading) < 15)
         PWM = 0;
@@ -49,23 +49,15 @@ function [wr] = wr_control_heading(wr, time)
         wr.DIRR = 1;
     end
 
-    PWML = abs(PWM)
-    PWMR = abs(PWM);
+    PWML = abs(PWM)*(1-wr.obs_mode);
+    PWMR = abs(PWM)*(1-wr.obs_mode);
 
-    min_PWM = 50;
     % setting the PWM limits, keep the codes here
     %PWML = min(90, PWML);
-<<<<<<< Updated upstream
-    PWML = rescale(PWML,min_PWM,254);
-    wr.PWML = uint8(max(0, PWML));
-    %PWMR = min(90, PWMR);
-    PWMR = rescale(PWMR,min_PWM,254);
-=======
     PWML = rescale(PWML,30,90,'InputMin',0,'InputMax',255);
     wr.PWML = uint8(max(0, PWML));
     %PWMR = min(90, PWMR);
     PWMR = rescale(PWMR,30,90,'InputMin',0,'InputMax',255);
->>>>>>> Stashed changes
     wr.PWMR = uint8(max(0, PWMR));
 
     scatter(time.curr,actual_angle,'g'); hold on;
